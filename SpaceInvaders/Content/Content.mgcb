@@ -1,0 +1,35 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Binaries/invaders.e
+/importer:
+/processor:
+/build:Binaries/invaders.e
+
+#begin Binaries/invaders.f
+/importer:
+/processor:
+/build:Binaries/invaders.f
+
+#begin Binaries/invaders.g
+/importer:
+/processor:
+/build:Binaries/invaders.g
+
+#begin Binaries/invaders.h
+/importer:
+/processor:
+/build:Binaries/invaders.h
+
