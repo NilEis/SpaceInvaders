@@ -6,30 +6,31 @@
 /platform:DesktopGL
 /config:
 /profile:Reach
-/compress:False
+/compress:True
 
 #-------------------------------- References --------------------------------#
 
+/reference:CustomLoader\Intel8080BinaryLoader.dll
 
 #---------------------------------- Content ---------------------------------#
 
 #begin Binaries/invaders.e
-/importer:
-/processor:
-/build:Binaries/invaders.e
+/importer:Intel8080BinaryImporter
+/processor:PassThroughProcessor
+/build:Binaries/invaders.e;Binaries/invaders.e.bin
 
 #begin Binaries/invaders.f
-/importer:
-/processor:
-/build:Binaries/invaders.f
+/importer:Intel8080BinaryImporter
+/processor:PassThroughProcessor
+/build:Binaries/invaders.f;Binaries/invaders.f.bin
 
 #begin Binaries/invaders.g
-/importer:
-/processor:
-/build:Binaries/invaders.g
+/importer:Intel8080BinaryImporter
+/processor:PassThroughProcessor
+/build:Binaries/invaders.g;Binaries/invaders.g.bin
 
 #begin Binaries/invaders.h
-/importer:
-/processor:
-/build:Binaries/invaders.h
+/importer:Intel8080BinaryImporter
+/processor:PassThroughProcessor
+/build:Binaries/invaders.h;Binaries/invaders.h.bin
 

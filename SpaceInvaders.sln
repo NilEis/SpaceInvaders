@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvaders", "SpaceInvaders\SpaceInvaders.csproj", "{F43769AE-A058-4028-813B-67835B25CDBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intel8080BinaryLoader", "Intel8080BinaryLoader\Intel8080BinaryLoader.csproj", "{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvadersCore", "SpaceInvadersCore\SpaceInvadersCore.csproj", "{688BB7EE-4688-43E4-B149-20881DA85322}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{F43769AE-A058-4028-813B-67835B25CDBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F43769AE-A058-4028-813B-67835B25CDBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F43769AE-A058-4028-813B-67835B25CDBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{688BB7EE-4688-43E4-B149-20881DA85322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{688BB7EE-4688-43E4-B149-20881DA85322}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{688BB7EE-4688-43E4-B149-20881DA85322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{688BB7EE-4688-43E4-B149-20881DA85322}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
