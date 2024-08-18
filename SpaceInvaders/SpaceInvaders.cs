@@ -9,8 +9,8 @@ namespace SpaceInvaders;
 
 public class SpaceInvaders : Game
 {
-    private const int Width = SpaceInvadersCore.SpaceInvadersCore.Height;
-    private const int Height = SpaceInvadersCore.SpaceInvadersCore.Width;
+    private const int Width = SpaceInvadersCore.SpaceInvadersCore.Width;
+    private const int Height = SpaceInvadersCore.SpaceInvadersCore.Height;
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private SpaceInvadersCore.SpaceInvadersCore core = new();
@@ -20,6 +20,9 @@ public class SpaceInvaders : Game
     private Stopwatch ttsw = new();
     private readonly Color[] frameBuffer = new Color[Width * Height];
     private object @lock = new();
+    private bool[] _buffer;
+    private float offsetX = 0f;
+    private float offsetY = 0f;
 
     public SpaceInvaders()
     {
@@ -53,12 +56,21 @@ public class SpaceInvaders : Game
             var sw = Stopwatch.StartNew();
             while (core.Running)
             {
-                core.TickCpu(16667.0 / 2.0);
-
-                frameChanged = core.TickVideo(frameChanged);
-                core.TickCpu(16667.0 / 2.0);
-
                 sw.Restart();
+                const double frameTime = 1000.0 / 60.0;
+                var halfFrameTimeMicros = (frameTime / 2.0) * 1000;
+                core.TickCpu(halfFrameTimeMicros);
+                var tickVideo = core.TickVideo(frameChanged);
+
+                core.TickCpu(halfFrameTimeMicros);
+                lock (@lock)
+                {
+                    frameChanged = tickVideo;
+                    if (frameChanged)
+                    {
+                        _buffer = core.GetFramebuffer();
+                    }
+                }
             }
         }).Start();
         ttsw.Start();
@@ -86,15 +98,24 @@ public class SpaceInvaders : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        UpdateFramebuffer();
+        bool changed;
+        lock (@lock)
+        {
+            changed = frameChanged;
+        }
+
+        if (changed)
+        {
+            UpdateFramebuffer();
+        }
 
         _spriteBatch.Begin();
 
         var scale = Math.Min(GraphicsDevice.Viewport.Width / (float)framebuffer.Width,
             GraphicsDevice.Viewport.Height / (float)framebuffer.Height);
         var position = new Vector2(
-            (GraphicsDevice.Viewport.Width - framebuffer.Width * scale) / 2,
-            (GraphicsDevice.Viewport.Height - framebuffer.Height * scale) / 2
+            (GraphicsDevice.Viewport.Width - framebuffer.Width * scale) / 2 + offsetX,
+            (GraphicsDevice.Viewport.Height - framebuffer.Height * scale) / 2 + offsetY
         );
 
         _spriteBatch.Draw(
@@ -102,7 +123,7 @@ public class SpaceInvaders : Game
             position, // Position to draw at
             null, // Source rectangle (null for full texture)
             Color.White, // Color tint
-            0f, // Rotation angle in radians
+            0, // Rotation angle in radians
             Vector2.Zero, // Origin for rotation
             scale, // Scale
             SpriteEffects.None, // Sprite effects
@@ -116,16 +137,20 @@ public class SpaceInvaders : Game
 
     private void UpdateFramebuffer()
     {
-        bool[] buffer;
         lock (@lock)
         {
             frameChanged = false;
-            buffer = core.GetFramebuffer();
         }
 
-        for (var i = 0; i < buffer.Length; i++)
+        lock (@lock)
         {
-            frameBuffer[i] = buffer[i] ? Color.White : Color.Black;
+            for (var y = 0; y < Width; y++)
+            {
+                for (var x = 0; x < Height; x++)
+                {
+                    frameBuffer[y + (Height - x - 1) * Width] = _buffer[x + y * Height] ? Color.White : Color.Black;
+                }
+            }
         }
 
 
