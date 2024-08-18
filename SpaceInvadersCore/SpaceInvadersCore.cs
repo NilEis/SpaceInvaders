@@ -12,7 +12,7 @@ public class SpaceInvadersCore
 
     private class VideoChip
     {
-        public byte[] FrameBuffer = new byte[Width * Height / 8];
+        public bool[] FrameBuffer = new bool[Width * Height];
         public bool HalfInterrupt = true;
     }
 
@@ -57,10 +57,11 @@ public class SpaceInvadersCore
         {
             t += _cpu.run(cpudiag: false, safe: false, print_debug: false).Item2;
         }
+
         return t;
     }
 
-    public byte[] GetFramebuffer()
+    public bool[] GetFramebuffer()
     {
         return _videoChip.FrameBuffer.ToArray();
     }
@@ -85,7 +86,13 @@ public class SpaceInvadersCore
         var seg = _cpu.GetMemory(0x2400, 0x3FFF);
         for (var i = 0; i < seg.Count; i++)
         {
-            _videoChip.FrameBuffer[i] = Utils.Reverse(seg[i]);
+            var y = i / 32;
+            for (var b = 0; b < 8; b++)
+            {
+                var x = i % 32 * 8 + b;
+                var color = (seg[i] & 0x1 << b) != 0;
+                _videoChip.FrameBuffer[x + y * Height] = color;
+            }
         }
 
         return true;

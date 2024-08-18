@@ -18,6 +18,8 @@ public class SpaceInvaders : Game
     private Texture2D framebuffer;
     uint tt = 0;
     private Stopwatch ttsw = new();
+    private readonly Color[] frameBuffer = new Color[Width * Height];
+    private object @lock = new();
 
     public SpaceInvaders()
     {
@@ -52,7 +54,6 @@ public class SpaceInvaders : Game
             while (core.Running)
             {
                 core.TickCpu(16667.0 / 2.0);
-                sw.Restart();
 
                 frameChanged = core.TickVideo(frameChanged);
                 core.TickCpu(16667.0 / 2.0);
@@ -78,16 +79,14 @@ public class SpaceInvaders : Game
             Exit();
         }
 
+        Window.Title = $"SpaceInvaders FPS: {gameTime.ElapsedGameTime}";
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        if (frameChanged)
-        {
-            UpdateFramebuffer();
-        }
+        UpdateFramebuffer();
 
         _spriteBatch.Begin();
 
@@ -117,19 +116,18 @@ public class SpaceInvaders : Game
 
     private void UpdateFramebuffer()
     {
-        frameChanged = false;
-        var buffer = core.GetFramebuffer();
-        var colorBuffer = new Color[Width * Height];
+        bool[] buffer;
+        lock (@lock)
+        {
+            frameChanged = false;
+            buffer = core.GetFramebuffer();
+        }
+
         for (var i = 0; i < buffer.Length; i++)
         {
-            var y = i / 32;
-            for (var b = 0; b < 8; b++)
-            {
-                var x = i % 32 * 8 + b;
-                var color = (buffer[i] & 0x1 << b) != 0 ? Color.White : Color.Black;
-                colorBuffer[x + y * Width] = color;
-            }
+            frameBuffer[i] = buffer[i] ? Color.White : Color.Black;
         }
+
 
         // for (var y = 0; y < Height; y++)
         // {
@@ -142,6 +140,6 @@ public class SpaceInvaders : Game
         //     }
         // }
 
-        framebuffer.SetData(colorBuffer);
+        framebuffer.SetData(frameBuffer);
     }
 }
