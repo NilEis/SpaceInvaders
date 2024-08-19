@@ -57,27 +57,26 @@ public class SpaceInvaders : Game
             {
                 sw.Restart();
                 const double frameTime = 1000.0 / 60.0;
-                const double halfFrameTimeMicros = (frameTime / 0.5) * 1000;
+                const double frameTimeMicros = frameTime * 1000.0;
+                const double halfFrameTimeMicros = (frameTimeMicros / 0.5);
                 core.TickCpu(halfFrameTimeMicros);
                 var tickVideo = core.TickVideo(frameChanged);
                 core.TickCpu(halfFrameTimeMicros);
                 lock (@lock)
                 {
                     frameChanged = tickVideo;
-                    if (frameChanged)
+                    if (frameChanged && drawn)
                     {
                         _buffer = core.GetFramebuffer();
                         drawn = false;
                     }
                 }
 
-                SpinWait.SpinUntil(() =>
+                if (tickVideo)
                 {
-                    lock (@lock)
-                    {
-                        return drawn;
-                    }
-                }, 16);
+                    SpinWait.SpinUntil(() => drawn,
+                        (int)(halfFrameTimeMicros - sw.Elapsed.TotalMicroseconds));
+                }
             }
         }).Start();
         ttsw.Start();
@@ -99,6 +98,10 @@ public class SpaceInvaders : Game
         }
 
         core.InsertCoin(Keyboard.GetState().IsKeyDown(Keys.C));
+        core.SelectOnePlayer(Keyboard.GetState().IsKeyDown(Keys.D1));
+        core.MoveLeftP1(Keyboard.GetState().IsKeyDown(Keys.Left));
+        core.MoveRightP1(Keyboard.GetState().IsKeyDown(Keys.Right));
+        core.ShootP1(Keyboard.GetState().IsKeyDown(Keys.Space));
 
         Window.Title = $"SpaceInvaders FPS: {gameTime.ElapsedGameTime}";
         base.Update(gameTime);

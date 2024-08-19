@@ -115,7 +115,7 @@ public class SpaceInvadersCore
         _cpu.Ports[1] = (byte)((_cpu.Ports[1] & 0b11011111) | (pressed ? 0b00100000 : 0b00000000));
     }
 
-    public void Shoot(bool pressed)
+    public void ShootP1(bool pressed)
     {
         _cpu.Ports[1] = (byte)((_cpu.Ports[1] & 0b11101111) | (pressed ? 0b00010000 : 0b00000000));
     }
