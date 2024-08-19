@@ -15,14 +15,13 @@ public class SpaceInvaders : Game
     private SpriteBatch _spriteBatch;
     private SpaceInvadersCore.SpaceInvadersCore core = new();
     private bool frameChanged = true;
+    private bool drawn = true;
     private Texture2D framebuffer;
     uint tt = 0;
     private Stopwatch ttsw = new();
     private readonly Color[] frameBuffer = new Color[Width * Height];
     private object @lock = new();
     private bool[] _buffer;
-    private float offsetX = 0f;
-    private float offsetY = 0f;
 
     public SpaceInvaders()
     {
@@ -58,10 +57,9 @@ public class SpaceInvaders : Game
             {
                 sw.Restart();
                 const double frameTime = 1000.0 / 60.0;
-                var halfFrameTimeMicros = (frameTime / 2.0) * 1000;
+                const double halfFrameTimeMicros = (frameTime / 0.5) * 1000;
                 core.TickCpu(halfFrameTimeMicros);
                 var tickVideo = core.TickVideo(frameChanged);
-
                 core.TickCpu(halfFrameTimeMicros);
                 lock (@lock)
                 {
@@ -69,8 +67,17 @@ public class SpaceInvaders : Game
                     if (frameChanged)
                     {
                         _buffer = core.GetFramebuffer();
+                        drawn = false;
                     }
                 }
+
+                SpinWait.SpinUntil(() =>
+                {
+                    lock (@lock)
+                    {
+                        return drawn;
+                    }
+                }, 16);
             }
         }).Start();
         ttsw.Start();
@@ -90,6 +97,8 @@ public class SpaceInvaders : Game
         {
             Exit();
         }
+
+        core.InsertCoin(Keyboard.GetState().IsKeyDown(Keys.C));
 
         Window.Title = $"SpaceInvaders FPS: {gameTime.ElapsedGameTime}";
         base.Update(gameTime);
@@ -114,8 +123,8 @@ public class SpaceInvaders : Game
         var scale = Math.Min(GraphicsDevice.Viewport.Width / (float)framebuffer.Width,
             GraphicsDevice.Viewport.Height / (float)framebuffer.Height);
         var position = new Vector2(
-            (GraphicsDevice.Viewport.Width - framebuffer.Width * scale) / 2 + offsetX,
-            (GraphicsDevice.Viewport.Height - framebuffer.Height * scale) / 2 + offsetY
+            (GraphicsDevice.Viewport.Width - framebuffer.Width * scale) / 2,
+            (GraphicsDevice.Viewport.Height - framebuffer.Height * scale) / 2
         );
 
         _spriteBatch.Draw(
@@ -131,6 +140,10 @@ public class SpaceInvaders : Game
         );
 
         _spriteBatch.End();
+        lock (@lock)
+        {
+            drawn = true;
+        }
 
         base.Draw(gameTime);
     }
