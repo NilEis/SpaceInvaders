@@ -26,7 +26,7 @@ public class SpaceInvadersCore
         _cpu.SetPin(Pin.INTE, false);
         _cpu.SetInPort(0, _ => 0b01110000);
         _cpu.SetInPort(1, _ => (byte)(_cpu.Ports[1] | 0b00001000));
-        _cpu.SetInPort(2, _ => 0b00000000);
+        _cpu.SetInPort(2, _ => _cpu.Ports[2]);
         _cpu.SetInPort(3, _ => sR.Reg);
         _cpu.SetOutPort(2, (_, b) => { sR.Offset = (byte)(b & 0b00000111); });
         _cpu.SetOutPort(4, (_, b) => { sR.Reg = b; });
@@ -103,6 +103,11 @@ public class SpaceInvadersCore
     public void Stop()
     {
         Running = false;
+    }
+
+    public void Tilt(bool pressed)
+    {
+        _cpu.Ports[2] = (byte)((_cpu.Ports[2] & 0b11111011) | (pressed ? 0b00000100 : 0b00000000));
     }
 
     public void MoveRightP1(bool pressed)

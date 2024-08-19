@@ -125,6 +125,7 @@ public class SpaceInvaders : Game
         core.MoveLeftP1(Keyboard.GetState().IsKeyDown(Keys.Left));
         core.MoveRightP1(Keyboard.GetState().IsKeyDown(Keys.Right));
         core.ShootP1(Keyboard.GetState().IsKeyDown(Keys.Space));
+        core.Tilt(Keyboard.GetState().IsKeyDown(Keys.T));
 
         Window.Title = $"SpaceInvaders FPS: {gameTime.ElapsedGameTime}";
         base.Update(gameTime);
@@ -144,7 +145,7 @@ public class SpaceInvaders : Game
             UpdateFramebuffer();
         }
 
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         var scale = Math.Min(GraphicsDevice.Viewport.Width / (float)framebuffer.Width,
             GraphicsDevice.Viewport.Height / (float)framebuffer.Height);
