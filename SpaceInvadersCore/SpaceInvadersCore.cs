@@ -63,7 +63,7 @@ public class SpaceInvadersCore
 
     public bool[] GetFramebuffer()
     {
-        return _videoChip.FrameBuffer.ToArray();
+        return _videoChip.FrameBuffer;
     }
 
     public bool TickVideo(bool frameChanged)
