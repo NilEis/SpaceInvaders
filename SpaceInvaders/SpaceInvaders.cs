@@ -17,11 +17,11 @@ public class SpaceInvaders : Game
     private bool frameChanged = true;
     private bool drawn = true;
     private Texture2D framebuffer;
-    uint tt = 0;
     private Stopwatch ttsw = new();
     private readonly Color[] frameBuffer = new Color[Width * Height];
     private object @lock = new();
     private bool[] _buffer;
+    private readonly Color[][] colorMask = new Color[2][];
 
     public SpaceInvaders()
     {
@@ -33,7 +33,25 @@ public class SpaceInvaders : Game
 
     protected override void Initialize()
     {
+        colorMask[0] = new Color[Width * Height];
+        colorMask[1] = new Color[Width * Height];
+        AddColorMask(0, 0, Width, Height, Color.White, Color.Black);
+        AddColorMask(0, 32, Width, 48, Color.Red, Color.Black);
+        AddColorMask(0, 192, Width, 208, new Color(0, 255, 0, 255), Color.Black);
         base.Initialize();
+        return;
+
+        void AddColorMask(int startX, int startY, int endX, int endY, Color setColor, Color unsetColor)
+        {
+            for (var y = startY; y < endY; y++)
+            {
+                for (var x = startX; x < endX; x++)
+                {
+                    colorMask[0][x + y * Width] = unsetColor;
+                    colorMask[1][x + y * Width] = setColor;
+                }
+            }
+        }
     }
 
     protected override void LoadContent()
@@ -55,27 +73,32 @@ public class SpaceInvaders : Game
             var sw = Stopwatch.StartNew();
             while (core.Running)
             {
-                sw.Restart();
+                const double cyclesPerSec = 2_000_000.0;
+                const double cyclesPerFrame = cyclesPerSec / 60.0;
+                const double halfCyclesPerFrame = cyclesPerFrame / 2.0;
                 const double frameTime = 1000.0 / 60.0;
                 const double frameTimeMicros = frameTime * 1000.0;
-                const double halfFrameTimeMicros = (frameTimeMicros / 0.5);
+                const double halfFrameTimeMicros = frameTimeMicros / 0.5;
+                sw.Restart();
                 core.TickCpu(halfFrameTimeMicros);
-                var tickVideo = core.TickVideo(frameChanged);
-                core.TickCpu(halfFrameTimeMicros);
-                lock (@lock)
+                if (core.TickVideo(frameChanged) && drawn)
                 {
-                    frameChanged = tickVideo;
-                    if (frameChanged && drawn)
-                    {
-                        _buffer = core.GetFramebuffer();
-                        drawn = false;
-                    }
+                    _buffer = core.GetFramebuffer();
+                    frameChanged = true;
+                    drawn = false;
                 }
 
-                if (tickVideo)
+                core.TickCpu(halfFrameTimeMicros - 11 * 500);
+                if (core.TickVideo(frameChanged) && drawn)
                 {
-                    SpinWait.SpinUntil(() => drawn,
-                        (int)(halfFrameTimeMicros - sw.Elapsed.TotalMicroseconds));
+                    _buffer = core.GetFramebuffer();
+                    frameChanged = true;
+                    drawn = false;
+                }
+
+                while (!drawn && core.Running)
+                {
+                    core.TickCpu(1);
                 }
             }
         }).Start();
@@ -164,7 +187,8 @@ public class SpaceInvaders : Game
             {
                 for (var x = 0; x < Height; x++)
                 {
-                    frameBuffer[y + (Height - x - 1) * Width] = _buffer[x + y * Height] ? Color.White : Color.Black;
+                    frameBuffer[y + (Height - x - 1) * Width] =
+                        colorMask[_buffer[x + y * Height] ? 1 : 0][y + (Height - x - 1) * Width];
                 }
             }
         }
