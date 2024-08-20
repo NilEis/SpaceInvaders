@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,7 +14,7 @@ public class SpaceInvaders : Game
     private const int Height = SpaceInvadersCore.SpaceInvadersCore.Height;
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private SpaceInvadersCore.SpaceInvadersCore core = new();
+    private SpaceInvadersCore.SpaceInvadersCore core;
     private bool frameChanged = true;
     private bool drawn = true;
     private Texture2D framebuffer;
@@ -22,6 +23,21 @@ public class SpaceInvaders : Game
     private object @lock = new();
     private bool[] _buffer;
     private readonly Color[][] colorMask = new Color[2][];
+    private Sound _sound;
+    public bool mute = false;
+
+    private struct Sound
+    {
+        public SoundEffectInstance UFO;
+        public SoundEffectInstance Shot;
+        public SoundEffectInstance Flash;
+        public SoundEffectInstance InvaderDie;
+        public SoundEffectInstance FleetMovement1;
+        public SoundEffectInstance FleetMovement2;
+        public SoundEffectInstance FleetMovement3;
+        public SoundEffectInstance FleetMovement4;
+        public SoundEffectInstance UFOHit;
+    }
 
     public SpaceInvaders()
     {
@@ -29,6 +45,73 @@ public class SpaceInvaders : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
+        byte lastPort3 = 0;
+        byte lastPort5 = 0;
+        core = new SpaceInvadersCore.SpaceInvadersCore(b =>
+        {
+            if (!mute)
+            {
+                if (((b & 0b00000001) != 0) && ((lastPort3 & 0b00000001) == 0))
+                {
+                    _sound.UFO.Play();
+                }
+                else if (((b & 0b00000001) == 0) && ((lastPort3 & 0b00000001) != 0))
+                {
+                    if (_sound.UFO.State == SoundState.Playing)
+                    {
+                        _sound.UFO.Stop(true);
+                    }
+                }
+
+                if (((b & 0b00000010) != 0) && ((lastPort3 & 0b00000010) == 0))
+                {
+                    _sound.Shot.Play();
+                }
+
+                if (((b & 0b00000100) != 0) && ((lastPort3 & 0b00000100) == 0))
+                {
+                    _sound.Flash.Play();
+                }
+
+                if (((b & 0b00001000) != 0) && ((lastPort3 & 0b00001000) == 0))
+                {
+                    _sound.InvaderDie.Play();
+                }
+            }
+
+            lastPort3 = b;
+        }, b =>
+        {
+            if (!mute)
+            {
+                if (((b & 0b00000001) != 0) && ((lastPort5 & 0b00000001) == 0))
+                {
+                    _sound.FleetMovement1.Play();
+                }
+
+                if (((b & 0b00000010) != 0) && ((lastPort5 & 0b00000010) == 0))
+                {
+                    _sound.FleetMovement2.Play();
+                }
+
+                if (((b & 0b00000100) != 0) && ((lastPort5 & 0b00000100) == 0))
+                {
+                    _sound.FleetMovement3.Play();
+                }
+
+                if (((b & 0b00001000) != 0) && ((lastPort5 & 0b00001000) == 0))
+                {
+                    _sound.FleetMovement4.Play();
+                }
+
+                if (((b & 0b00010000) != 0) && ((lastPort5 & 0b00010000) == 0))
+                {
+                    _sound.UFOHit.Play();
+                }
+            }
+
+            lastPort5 = b;
+        });
     }
 
     protected override void Initialize()
@@ -37,7 +120,13 @@ public class SpaceInvaders : Game
         colorMask[1] = new Color[Width * Height];
         AddColorMask(0, 0, Width, Height, Color.White, Color.Black);
         AddColorMask(0, 32, Width, 48, Color.Red, Color.Black);
-        AddColorMask(0, 192, Width, 208, new Color(0, 255, 0, 255), Color.Black);
+        var spaceInvadersGreen = new Color(0, 255, 0, 255);
+        for (var i = 0; i < 4; i++)
+        {
+            AddColorMask(32 + i * 45, 192, 54 + i * 45, 208, spaceInvadersGreen, Color.Black);
+        }
+
+        AddColorMask(26, 240, 55, 248, spaceInvadersGreen, Color.Black);
         base.Initialize();
         return;
 
@@ -64,6 +153,16 @@ public class SpaceInvaders : Game
             .LoadMemory(Content.Load<byte[]>("Binaries/invaders.f.bin"), 0x1000)
             .LoadMemory(Content.Load<byte[]>("Binaries/invaders.e.bin"), 0x1800)
             ;
+        _sound.UFO = Content.Load<SoundEffect>("Sounds/ufo_lowpitch").CreateInstance();
+        _sound.UFO.IsLooped = true;
+        _sound.Shot = Content.Load<SoundEffect>("Sounds/shoot").CreateInstance();
+        _sound.Flash = Content.Load<SoundEffect>("Sounds/explosion").CreateInstance();
+        _sound.InvaderDie = Content.Load<SoundEffect>("Sounds/invaderkilled").CreateInstance();
+        _sound.FleetMovement1 = Content.Load<SoundEffect>("Sounds/fastinvader1").CreateInstance();
+        _sound.FleetMovement2 = Content.Load<SoundEffect>("Sounds/fastinvader2").CreateInstance();
+        _sound.FleetMovement3 = Content.Load<SoundEffect>("Sounds/fastinvader3").CreateInstance();
+        _sound.FleetMovement4 = Content.Load<SoundEffect>("Sounds/fastinvader4").CreateInstance();
+        _sound.UFOHit = Content.Load<SoundEffect>("Sounds/explosion").CreateInstance();
     }
 
     protected override void BeginRun()
@@ -120,11 +219,20 @@ public class SpaceInvaders : Game
             Exit();
         }
 
+        if (Keyboard.GetState().IsKeyDown(Keys.M))
+        {
+            mute = !mute;
+        }
+
         core.InsertCoin(Keyboard.GetState().IsKeyDown(Keys.C));
         core.SelectOnePlayer(Keyboard.GetState().IsKeyDown(Keys.D1));
+        core.SelectTwoPlayer(Keyboard.GetState().IsKeyDown(Keys.D2));
         core.MoveLeftP1(Keyboard.GetState().IsKeyDown(Keys.Left));
         core.MoveRightP1(Keyboard.GetState().IsKeyDown(Keys.Right));
         core.ShootP1(Keyboard.GetState().IsKeyDown(Keys.Space));
+        core.MoveLeftP2(Keyboard.GetState().IsKeyDown(Keys.A));
+        core.MoveRightP2(Keyboard.GetState().IsKeyDown(Keys.D));
+        core.ShootP2(Keyboard.GetState().IsKeyDown(Keys.S));
         core.Tilt(Keyboard.GetState().IsKeyDown(Keys.T));
 
         Window.Title = $"SpaceInvaders FPS: {gameTime.ElapsedGameTime}";
