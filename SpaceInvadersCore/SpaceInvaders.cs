@@ -6,15 +6,15 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace SpaceInvaders;
+namespace SpaceInvadersCore;
 
 public class SpaceInvaders : Game
 {
-    private const int Width = SpaceInvadersCore.SpaceInvadersCore.Width;
-    private const int Height = SpaceInvadersCore.SpaceInvadersCore.Height;
+    private const int Width = Core.SpaceInvadersCore.Width;
+    private const int Height = Core.SpaceInvadersCore.Height;
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private SpaceInvadersCore.SpaceInvadersCore core;
+    private Core.SpaceInvadersCore core;
     private bool frameChanged = true;
     private bool drawn = true;
     private Texture2D framebuffer;
@@ -24,7 +24,7 @@ public class SpaceInvaders : Game
     private bool[] _buffer;
     private readonly Color[][] colorMask = new Color[2][];
     private Sound _sound;
-    public bool mute = false;
+    public bool mute;
 
     private struct Sound
     {
@@ -47,7 +47,7 @@ public class SpaceInvaders : Game
         Window.AllowUserResizing = true;
         byte lastPort3 = 0;
         byte lastPort5 = 0;
-        core = new SpaceInvadersCore.SpaceInvadersCore(b =>
+        core = new Core.SpaceInvadersCore(b =>
         {
             if (!mute)
             {

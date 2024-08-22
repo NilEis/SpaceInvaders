@@ -1,12 +1,9 @@
-﻿namespace SpaceInvaders;
+﻿using System;
+
+namespace SpaceInvadersCore.Core;
 
 public class ShiftRegister
 {
-    public ShiftRegister()
-    {
-        
-    }
-    
     private ushort _reg;
 
     public byte Reg
@@ -26,7 +23,7 @@ public class ShiftRegister
 
     public byte Offset
     {
-        get => offset;
+        get => _offset;
 
         set
         {
@@ -35,9 +32,9 @@ public class ShiftRegister
                 throw new ArgumentException("Offset must be less than or equal to 0x07");
             }
 
-            offset = value;
+            _offset = value;
         }
     }
 
-    private byte offset;
+    private byte _offset;
 }

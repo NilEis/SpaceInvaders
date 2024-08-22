@@ -12,7 +12,7 @@
     </ItemGroup>
     <Target Name="CopyToContentFolder" AfterTargets="Build">
         <Copy SourceFiles="$(OutputPath)Intel8080BinaryLoader.dll"
-              DestinationFolder="$(SolutionDir)SpaceInvaders/Content/CustomLoader/"
+              DestinationFolder="$(SolutionDir)SpaceInvadersCore/Content/CustomLoader/"
               SkipUnchangedFiles="true" />
     </Target>
 </Project>

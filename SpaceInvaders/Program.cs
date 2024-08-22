@@ -1,2 +1,2 @@
-﻿using var game = new SpaceInvaders.SpaceInvaders();
+﻿using var game = new SpaceInvadersCore.SpaceInvaders();
 game.Run();

@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Threading.Tasks;
 using Intel8080Tools;
-using SpaceInvaders;
 
-namespace SpaceInvadersCore;
+namespace SpaceInvadersCore.Core;
 
 public class SpaceInvadersCore
 {

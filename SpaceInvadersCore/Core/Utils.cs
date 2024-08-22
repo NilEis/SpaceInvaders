@@ -1,4 +1,4 @@
-﻿namespace SpaceInvadersCore;
+﻿namespace SpaceInvadersCore.Core;
 
 public static class Utils
 {

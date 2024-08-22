@@ -4,7 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvaders", "SpaceInvad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intel8080BinaryLoader", "Intel8080BinaryLoader\Intel8080BinaryLoader.csproj", "{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvadersCore", "SpaceInvadersCore\SpaceInvadersCore.csproj", "{688BB7EE-4688-43E4-B149-20881DA85322}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvadersCore", "SpaceInvadersCore\SpaceInvadersCore.csproj", "{802DAC70-E6E5-4701-A5DB-8E2E8D0D1EA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvadersIOS", "SpaceInvadersIOS\SpaceInvadersIOS.csproj", "{9452667F-881F-42BB-8839-40126C5194C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceInvadersAndroid", "SpaceInvadersAndroid\SpaceInvadersAndroid.csproj", "{BAD62A9A-2D7A-405A-A4D9-230AE158127A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +24,17 @@ Global
 		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACBCD7D-7A32-4E48-A151-05B3D7E5BF1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{688BB7EE-4688-43E4-B149-20881DA85322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{688BB7EE-4688-43E4-B149-20881DA85322}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{688BB7EE-4688-43E4-B149-20881DA85322}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{688BB7EE-4688-43E4-B149-20881DA85322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802DAC70-E6E5-4701-A5DB-8E2E8D0D1EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802DAC70-E6E5-4701-A5DB-8E2E8D0D1EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802DAC70-E6E5-4701-A5DB-8E2E8D0D1EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802DAC70-E6E5-4701-A5DB-8E2E8D0D1EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9452667F-881F-42BB-8839-40126C5194C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9452667F-881F-42BB-8839-40126C5194C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9452667F-881F-42BB-8839-40126C5194C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9452667F-881F-42BB-8839-40126C5194C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAD62A9A-2D7A-405A-A4D9-230AE158127A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAD62A9A-2D7A-405A-A4D9-230AE158127A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAD62A9A-2D7A-405A-A4D9-230AE158127A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAD62A9A-2D7A-405A-A4D9-230AE158127A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
